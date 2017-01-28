@@ -7,7 +7,7 @@ Date: Jan 2017
 
 '''
 
-import sys, time
+import sys, time, timeit
 import multiprocessing
 
 
@@ -23,7 +23,7 @@ class progressbar():
         pos = -1
         while True:
             pos = (pos + 1) % len(self.display)
-            msg = before + self.display[pos] + after
+            msg = before + "["+ self.display[pos] + "]" + after
             write(msg)
             flush()
             write('\x08' * len(msg))
@@ -33,10 +33,13 @@ class progressbar():
     def __call__(self, *args, **kwargs):
         try:
             self.spinner = multiprocessing.Process(
-                None, self.spin_test, args=('Please Wait ... ', '')
+                None, self.spin_test, args=('Calculating - ' + self.func.__name__ + ' ', '')
             )
             self.spinner.start()
+            starttime = time.time()
             self.func(*args)
+            endtime = time.time()
+            print(" - Completed in " + str(round(endtime-starttime, 5)) +"secs" )
             self.spinner.terminate()
-        except:
+        except AttributeError:
             print("Progress bar error")
