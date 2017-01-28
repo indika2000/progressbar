@@ -14,8 +14,8 @@ import multiprocessing
 class progressbar():
     """ Parent Class for ProgressBar, will make abstract later"""
     def __init__(self, f):
-        self.display = ['|', '/', '-', '\\']
-        self.delay = 0.1
+        self.display = [u"\u2596", u"\u2598",u"\u2597", u"\u259A", u"\u259E"]
+        self.delay = 0.5
         self.func = f
 
     def spin_test(self, before = '', after = ''):
@@ -29,17 +29,24 @@ class progressbar():
             write('\x08' * len(msg))
             time.sleep(self.delay)
 
+    def complete_spin(self):
+        sys.stdout.write('\x08')
+        sys.stdout.write('\x08')
+        sys.stdout.write(u"\u2588"+"]")
+        sys.stdout.flush()
 
     def __call__(self, *args, **kwargs):
         try:
             self.spinner = multiprocessing.Process(
-                None, self.spin_test, args=('Calculating - ' + self.func.__name__ + ' ', '')
+                None, self.spin_test, args=('Processing function - ' + self.func.__name__ + ' ', '')
             )
             self.spinner.start()
             starttime = time.time()
             self.func(*args)
             endtime = time.time()
-            print(" - Completed in " + str(round(endtime-starttime, 5)) +"secs" )
             self.spinner.terminate()
+            self.complete_spin()
+            print(" - Completed in " + str(round(endtime-starttime, 5)) +"secs" )
+
         except AttributeError:
             print("Progress bar error")
