@@ -36,7 +36,7 @@ class progressbar():
                 None, self.spin_test, args=('Please Wait ... ', '')
             )
             self.spinner.start()
-            self.func()
+            self.func(*args)
             self.spinner.terminate()
         except:
             print("Progress bar error")
